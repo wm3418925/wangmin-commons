@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    
+    <context:property-placeholder
+		location="classpath:spring/test-redis/component/test-redis-component.properties" />
+
+    <import resource="classpath*:common-redis.xml"  />
+
+    <bean id="redisComponent" class="wangmin.common.cache.RedisComponent" destroy-method="destroy">
+        <property name="pool" ref="shardedJedisPool" />
+    </bean>
+</beans>
