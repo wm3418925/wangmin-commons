@@ -9,11 +9,11 @@
        default-autowire="byName">
 
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-        <property name="maxTotal" value="${sunrise.com.redis.pool.maxTotal}" />
-        <property name="maxIdle" value="${sunrise.com.redis.pool.maxIdle}" />
-        <property name="maxWaitMillis" value="${sunrise.com.redis.pool.maxWaitMillis}" />
-        <property name="testOnBorrow" value="${sunrise.com.redis.pool.testOnBorrow}" />
-        <property name="testOnReturn" value="${sunrise.com.redis.pool.testOnReturn}" />
+        <property name="maxTotal" value="${wangmin.common.redis.pool.maxTotal}" />
+        <property name="maxIdle" value="${wangmin.common.redis.pool.maxIdle}" />
+        <property name="maxWaitMillis" value="${wangmin.common.redis.pool.maxWaitMillis}" />
+        <property name="testOnBorrow" value="${wangmin.common.redis.pool.testOnBorrow}" />
+        <property name="testOnReturn" value="${wangmin.common.redis.pool.testOnReturn}" />
     </bean>
 
     <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool">
@@ -21,7 +21,7 @@
         <constructor-arg index="1">
             <list>
                 <bean class="redis.clients.jedis.JedisShardInfo">
-                    <constructor-arg index="0" value="${sunrise.com.redis.host}" />
+                    <constructor-arg index="0" value="${wangmin.common.redis.host}" />
                 </bean>
             </list>
         </constructor-arg>

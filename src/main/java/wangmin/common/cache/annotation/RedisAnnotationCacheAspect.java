@@ -12,7 +12,6 @@ import org.springframework.util.StringUtils;
 import wangmin.common.cache.BaseCacheRepository;
 import wangmin.common.cache.CacheRepositoryImpl;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Method;
 
 /**
@@ -22,8 +21,10 @@ import java.lang.reflect.Method;
 public class RedisAnnotationCacheAspect implements Ordered {
     private final static Logger logger = LoggerFactory.getLogger(RedisAnnotationCacheAspect.class);
 
-    @Resource(name = "wangminAnnotationCacheRepository")
     private CacheRepositoryImpl cacheRepository;
+    public void setCacheRepository(CacheRepositoryImpl cacheRepository) {
+        this.cacheRepository = cacheRepository;
+    }
 
     @Pointcut("@annotation(wangmin.common.cache.annotation.RedisAnnotationCache)")
     public void cacheService() {

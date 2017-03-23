@@ -32,5 +32,7 @@
         <property name="objectSerializer" ref="kryoObjectSerializer" />
     </bean>
 
-    <bean id="redisAnnotationCacheAspect" class="wangmin.common.cache.annotation.RedisAnnotationCacheAspect" />
+    <bean id="redisAnnotationCacheAspect" class="wangmin.common.cache.annotation.RedisAnnotationCacheAspect">
+        <property name="cacheRepository" ref="wangminAnnotationCacheRepository" />
+    </bean>
 </beans>
