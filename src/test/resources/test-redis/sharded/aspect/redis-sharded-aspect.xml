@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <context:annotation-config />
+    <context:component-scan base-package="wangmin.common.cache.sharded.aspect" />
+    <!-- 支持aop:aspectj -->
+    <aop:aspectj-autoproxy/>
+
+    <!-- redis配置的demo -->
+    <context:property-placeholder
+		location="classpath:test-redis/sharded/aspect/redis-sharded-aspect.properties" />
+
+    <import resource="classpath*:common-sharded-jedis-pool.xml" />
+
+    <bean id="binaryCacheRepository" class="wangmin.common.cache.sharded.BinaryCacheShardedRepository" >
+        <property name="pool" ref="shardedJedisPool" />
+    </bean>
+
+    <!-- 值的序列化类 -->
+    <bean id="kryoRedisSerializer" class="wangmin.common.cache.common.serializer.KryoRedisSerializer" />
+
+    <!-- 注解aop使用的redis缓存处理类 -->
+    <bean id="redisAnnotationCacheRepository" class="wangmin.common.cache.common.CacheRepositoryImpl">
+        <property name="defaultExpiration" value="3000" />
+        <property name="serializer" ref="kryoRedisSerializer" />
+        <property name="binaryCacheRepositoryInterface" ref="binaryCacheRepository" />
+    </bean>
+
+    <!-- aspect切面类, 对注解方法使用环绕切面 -->
+    <bean id="wangminCacheAspect" class="wangmin.common.cache.common.RedisAnnotationCacheAspect">
+        <property name="cacheRepository" ref="redisAnnotationCacheRepository" />
+    </bean>
+</beans>

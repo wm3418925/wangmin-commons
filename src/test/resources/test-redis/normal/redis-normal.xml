@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:annotation-config />
+
+    <!-- redis配置的demo -->
+    <context:property-placeholder
+		location="classpath:test-redis/normal/redis-normal.properties" />
+
+    <!-- redis连接池类 -->
+    <bean id="binaryJedis" class="redis.clients.jedis.BinaryJedis">
+        <constructor-arg index="0" value="${wangmin.common.redis.host}" />
+    </bean>
+
+    <!-- 值的序列化类 -->
+    <bean id="kryoRedisSerializer" class="wangmin.common.cache.common.serializer.KryoRedisSerializer" />
+
+    <bean id="redisComponent" class="wangmin.common.cache.normal.RedisNormalComponent">
+        <property name="jedis" ref="binaryJedis" />
+        <property name="serializer" ref="kryoRedisSerializer" />
+    </bean>
+</beans>

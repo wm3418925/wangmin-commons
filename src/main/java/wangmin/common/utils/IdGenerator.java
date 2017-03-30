@@ -95,7 +95,7 @@ public final class IdGenerator implements ApplicationListener<ApplicationEvent> 
                 client = null;
             }
             client = CuratorFrameworkFactory.builder()
-                    .connectString(zkConnStr).namespace("sunriseId")
+                    .connectString(zkConnStr).namespace("wangminId")
                     .retryPolicy(new RetryNTimes(20, 3000))
                     .sessionTimeoutMs(5000)
                     .maxCloseWaitMs(5000)

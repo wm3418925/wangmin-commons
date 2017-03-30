@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-autowire="byName">
+
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="${wangmin.common.redis.pool.maxTotal}" />
+        <property name="maxIdle" value="${wangmin.common.redis.pool.maxIdle}" />
+        <property name="maxWaitMillis" value="${wangmin.common.redis.pool.maxWaitMillis}" />
+        <property name="testOnBorrow" value="${wangmin.common.redis.pool.testOnBorrow}" />
+        <property name="testOnReturn" value="${wangmin.common.redis.pool.testOnReturn}" />
+    </bean>
+
+    <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool">
+        <constructor-arg index="0" ref="jedisPoolConfig" />
+        <constructor-arg index="1">
+            <list>
+                <bean class="redis.clients.jedis.JedisShardInfo">
+                    <constructor-arg index="0" value="${wangmin.common.redis.host}" />
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>

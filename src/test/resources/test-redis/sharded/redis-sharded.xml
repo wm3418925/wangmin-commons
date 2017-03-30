@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- redis://127.0.0.1:6379/1 -->
+    <context:property-placeholder
+		location="classpath:test-redis/sharded/redis-sharded.properties" />
+
+    <import resource="classpath*:common-sharded-jedis-pool.xml" />
+
+    <bean id="kryoRedisSerializer" class="wangmin.common.cache.common.serializer.KryoRedisSerializer" />
+
+    <bean id="redisComponent" class="wangmin.common.cache.sharded.RedisShardedComponent" destroy-method="destroy">
+        <property name="pool" ref="shardedJedisPool" />
+        <property name="serializer" ref="kryoRedisSerializer" />
+    </bean>
+</beans>
