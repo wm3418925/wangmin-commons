@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
  * 封装redis的各种操作
  * srem 这类方法可能有bug
  */
-public class RedisComponent {
-    private final static Logger logger = LoggerFactory.getLogger(RedisComponent.class);
+public class ShardedJedisComponent {
+    private final static Logger logger = LoggerFactory.getLogger(ShardedJedisComponent.class);
 
     private ShardedJedisPool pool;
 
@@ -587,7 +587,7 @@ public class RedisComponent {
                 if (this.serializer == null) {
                     // 为了向下兼容默认,如果没有提供序列化器,默认使用,json序列化
                     serializer = new JsonRedisSerializer();
-                    logger.info("RedisComponent [" + this.toString() + "] is done! serializer:" + serializer.toString());
+                    logger.info("ShardedJedisComponent [" + this.toString() + "] is done! serializer:" + serializer.toString());
                 }
             }
         }

@@ -10,7 +10,7 @@
 
     <import resource="classpath*:common-redis.xml"  />
 
-    <bean id="redisComponent" class="wangmin.common.cache.RedisComponent" destroy-method="destroy">
+    <bean id="shardedJedisComponent" class="wangmin.common.cache.ShardedJedisComponent" destroy-method="destroy">
         <property name="pool" ref="shardedJedisPool" />
     </bean>
 </beans>

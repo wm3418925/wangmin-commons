@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import wangmin.common.cache.RedisComponent;
+import wangmin.common.cache.ShardedJedisComponent;
 
 import java.util.Set;
 
@@ -20,7 +20,7 @@ public class TestRedisComponent {
     private final static Logger logger = LoggerFactory.getLogger(TestRedisComponent.class);
 
     @Autowired
-    private RedisComponent redisComponent;
+    private ShardedJedisComponent redisComponent;
 
     @Before
     public void before() {
