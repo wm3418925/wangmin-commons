@@ -94,11 +94,11 @@ public class BinaryCacheShardedRepository implements BinaryCacheRepositoryInterf
             }
         });
     }
-    private void setInternal(final byte[] keyBytes, final long expire, final byte[] valueBytes) {
+    private void setInternal(final byte[] keyBytes, final int expire, final byte[] valueBytes) {
         this.execute(new JedisActionNoResult() {
             @Override
             public void action(ShardedJedis jedis) {
-                jedis.setex(keyBytes, (int) expire, valueBytes);
+                jedis.setex(keyBytes, expire, valueBytes);
             }
         });
     }

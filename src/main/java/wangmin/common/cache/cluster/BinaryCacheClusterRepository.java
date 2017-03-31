@@ -1,5 +1,6 @@
 package wangmin.common.cache.cluster;
 
+import redis.clients.jedis.Protocol;
 import wangmin.common.cache.common.BinaryCacheRepositoryInterface;
 import wangmin.common.cache.common.NoCacheException;
 import wangmin.common.utils.BinaryUtils;
@@ -62,7 +63,7 @@ public class BinaryCacheClusterRepository implements BinaryCacheRepositoryInterf
                 if (expirationSeconds <= 0) expirationSeconds = 1;
             }
 
-            jedisCluster.set(keyBytes, valueBytes, null, BinaryUtils.intToBytes(expirationSeconds), 0);
+            jedisCluster.set(keyBytes, valueBytes, null, Protocol.toByteArray(expirationSeconds), 0);
         } catch (Exception e) {
             logger.info("set error, keyBytes={}, valueBytes={}", keyBytes, valueBytes);
             throw e;
