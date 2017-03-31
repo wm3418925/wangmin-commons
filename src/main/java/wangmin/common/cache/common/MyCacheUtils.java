@@ -12,7 +12,7 @@ public abstract class MyCacheUtils {
         } else {
             StringBuilder sb = new StringBuilder();
             sb.append(type.name());
-            sb.append('~');
+            sb.append(':');
             sb.append(key);
             return sb.toString();
         }

@@ -73,7 +73,7 @@ public class RedisAnnotationCacheAspect implements Ordered {
     private static String generateKeyStr(String type, Object key) {
         StringBuilder sb = new StringBuilder();
         sb.append(type);
-        sb.append('~');
+        sb.append(':');
         sb.append(key);
         return sb.toString();
     }
