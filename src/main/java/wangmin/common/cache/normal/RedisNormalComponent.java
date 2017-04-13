@@ -33,9 +33,14 @@ public class RedisNormalComponent implements RedisComponentInterface {
     public void set(final Enum type, final String key, final Object value) {
         jedis.set(MyCacheUtils.generateKeyBytes(type, key), serialize(value));
     }
-
-    public void set(final Enum type, final String key, final long expire, final Object value) {
-        jedis.setex(MyCacheUtils.generateKeyBytes(type, key), (int) expire, serialize(value));
+    public void set(final Enum type, final String key, final int expireSeconds, final Object value) {
+        jedis.setex(MyCacheUtils.generateKeyBytes(type, key), expireSeconds, serialize(value));
+    }
+    public void setnxExpire(final Enum type, final String key, final long expireMilliseconds, final Object value) {
+        jedis.set(MyCacheUtils.generateKeyBytes(type, key), serialize(value), MyCacheUtils.NX, MyCacheUtils.PX, expireMilliseconds);
+    }
+    public void setxxExpire(final Enum type, final String key, final long expireMilliseconds, final Object value) {
+        jedis.set(MyCacheUtils.generateKeyBytes(type, key), serialize(value), MyCacheUtils.XX, MyCacheUtils.PX, expireMilliseconds);
     }
 
     public Long del(final Enum type, final String key) {
@@ -141,10 +146,10 @@ public class RedisNormalComponent implements RedisComponentInterface {
     public void hset(final Enum type, final String key, final Object mapKey, final Object mapValue) {
         jedis.hset(MyCacheUtils.generateKeyBytes(type, key), serialize(mapKey), serialize(mapValue));
     }
-    public void hset(final Enum type, final String key, final Object mapKey, final Object mapValue, final int second) {
+    public void hset(final Enum type, final String key, final Object mapKey, final Object mapValue, final int expireSeconds) {
         byte[] keyBytes = MyCacheUtils.generateKeyBytes(type, key);
         jedis.hset(keyBytes, serialize(mapKey), serialize(mapValue));
-        jedis.expire(keyBytes, second);
+        jedis.expire(keyBytes, expireSeconds);
     }
     public void hdel(final Enum type, final String key, final Object mapKey) {
         jedis.hdel(MyCacheUtils.generateKeyBytes(type, key), serialize(mapKey));
@@ -162,7 +167,7 @@ public class RedisNormalComponent implements RedisComponentInterface {
             jedis.hmset(MyCacheUtils.generateKeyBytes(type, key), m);
         }
     }
-    public void hmset(final Enum type, final String key, final Map<?, ?> map, final long expire) {
+    public void hmset(final Enum type, final String key, final Map<?, ?> map, final int expireSeconds) {
         if (map != null && !map.isEmpty()) {
             Map<byte[], byte[]> m = new HashMap<>(map.size());
 
@@ -174,7 +179,7 @@ public class RedisNormalComponent implements RedisComponentInterface {
 
             byte[] keyBytes = MyCacheUtils.generateKeyBytes(type, key);
             jedis.hmset(keyBytes, m);
-            jedis.expire(keyBytes, (int) expire);
+            jedis.expire(keyBytes, expireSeconds);
         }
     }
 

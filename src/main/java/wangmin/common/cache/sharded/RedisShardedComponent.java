@@ -52,12 +52,27 @@ public class RedisShardedComponent implements RedisComponentInterface {
             }
         });
     }
-
-    public void set(final Enum type, final String key, final long expire, final Object value) {
+    public void set(final Enum type, final String key, final int expireSeconds, final Object value) {
         this.execute(new JedisActionNoResult() {
             @Override
             public void action(ShardedJedis jedis) {
-                jedis.setex(MyCacheUtils.generateKeyBytes(type, key), (int) expire, serialize(value));
+                jedis.setex(MyCacheUtils.generateKeyBytes(type, key), expireSeconds, serialize(value));
+            }
+        });
+    }
+    public void setnxExpire(final Enum type, final String key, final long expireMilliseconds, final Object value) {
+        this.execute(new JedisActionNoResult() {
+            @Override
+            public void action(ShardedJedis jedis) {
+                jedis.set(MyCacheUtils.generateKeyBytes(type, key), serialize(value), MyCacheUtils.NX, MyCacheUtils.PX, expireMilliseconds);
+            }
+        });
+    }
+    public void setxxExpire(final Enum type, final String key, final long expireMilliseconds, final Object value) {
+        this.execute(new JedisActionNoResult() {
+            @Override
+            public void action(ShardedJedis jedis) {
+                jedis.set(MyCacheUtils.generateKeyBytes(type, key), serialize(value), MyCacheUtils.XX, MyCacheUtils.PX, expireMilliseconds);
             }
         });
     }
@@ -270,12 +285,12 @@ public class RedisShardedComponent implements RedisComponentInterface {
             }
         });
     }
-    public void hset(final Enum type, final String key, final Object mapKey, final Object mapValue, final int second) {
+    public void hset(final Enum type, final String key, final Object mapKey, final Object mapValue, final int expireSeconds) {
         this.execute(new JedisActionNoResult() {
             @Override
             public void action(ShardedJedis jedis) {
                 jedis.hset(MyCacheUtils.generateKeyBytes(type, key), serialize(mapKey), serialize(mapValue));
-                jedis.expire(MyCacheUtils.generateKeyBytes(type, key), second);
+                jedis.expire(MyCacheUtils.generateKeyBytes(type, key), expireSeconds);
             }
         });
     }
@@ -305,7 +320,7 @@ public class RedisShardedComponent implements RedisComponentInterface {
             }
         });
     }
-    public void hmset(final Enum type, final String key, final Map<?, ?> map, final long expire) {
+    public void hmset(final Enum type, final String key, final Map<?, ?> map, final int expireSeconds) {
         this.execute(new JedisActionNoResult() {
             @Override
             public void action(ShardedJedis jedis) {
@@ -320,7 +335,7 @@ public class RedisShardedComponent implements RedisComponentInterface {
 
                     byte[] keyBytes = MyCacheUtils.generateKeyBytes(type, key);
                     jedis.hmset(keyBytes, m);
-                    jedis.expire(keyBytes, (int) expire);
+                    jedis.expire(keyBytes, expireSeconds);
                 }
             }
         });

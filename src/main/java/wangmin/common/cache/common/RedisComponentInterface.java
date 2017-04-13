@@ -10,8 +10,9 @@ public interface RedisComponentInterface {
     <T> T get(final Enum type, final String key, final Class<T> c);
 
     void set(final Enum type, final String key, final Object value);
-
-    void set(final Enum type, final String key, final long expire, final Object value);
+    void set(final Enum type, final String key, final int expireSeconds, final Object value);
+    void setnxExpire(final Enum type, final String key, final long expireMilliseconds, final Object value);
+    void setxxExpire(final Enum type, final String key, final long expireMilliseconds, final Object value);
 
     Long del(final Enum type, final String key);
 
@@ -42,10 +43,10 @@ public interface RedisComponentInterface {
     <T> List<T> hvals(final Enum type, final String key, final Class<T> valueClass);
     <T> T hget(final Enum type, final String key, final Object mapKey, final Class<T> c);
     void hset(final Enum type, final String key, final Object mapKey, final Object mapValue);
-    void hset(final Enum type, final String key, final Object mapKey, final Object mapValue, final int second);
+    void hset(final Enum type, final String key, final Object mapKey, final Object mapValue, final int expireSeconds);
     void hdel(final Enum type, final String key, final Object mapKey);
     void hmset(final Enum type, final String key, final Map<?, ?> map);
-    void hmset(final Enum type, final String key, final Map<?, ?> map, final long expire);
+    void hmset(final Enum type, final String key, final Map<?, ?> map, final int expireSeconds);
 
 
     Long zadd(final Enum type, final String key, final double score, final Object member);
