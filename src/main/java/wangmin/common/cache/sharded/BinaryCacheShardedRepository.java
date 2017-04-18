@@ -26,7 +26,7 @@ public class BinaryCacheShardedRepository implements BinaryCacheRepositoryInterf
      * 返回值: byte数组长度为0代表cache保存的是空值, 其他代表cache保存的是正确值
      * */
     @Override
-    public byte[] get(byte[] keyBytes, boolean setExpire, int expiration) throws NoCacheException {
+    public byte[] get(byte[] keyBytes, boolean setExpire, int expireSeconds) throws NoCacheException {
         try {
             byte[] valueBytes = getInternal(keyBytes);
             if (null == valueBytes)
@@ -35,10 +35,10 @@ public class BinaryCacheShardedRepository implements BinaryCacheRepositoryInterf
             if (setExpire) {
                 if (0 == valueBytes.length) {
                     // null 值 过期时间需要更短
-                    expiration >>>= 2;
-                    if (expiration <= 0) expiration = 1;
+                    expireSeconds >>>= 2;
+                    if (expireSeconds <= 0) expireSeconds = 1;
                 }
-                expireInternal(keyBytes, expiration);
+                expireInternal(keyBytes, expireSeconds);
             }
 
             return valueBytes;
@@ -53,19 +53,36 @@ public class BinaryCacheShardedRepository implements BinaryCacheRepositoryInterf
      * valueBytes 为空或者长度为0, 代表添加一个空的cache
      * */
     @Override
-    public void set(byte[] keyBytes, byte[] valueBytes, int expirationSeconds) throws Exception {
+    public void set(byte[] keyBytes, byte[] valueBytes) throws Exception {
+        try {
+            if (null == valueBytes || 0 == valueBytes.length) {
+                valueBytes = BinaryUtils.emptyByteArray;
+            }
+
+            setInternal(keyBytes, valueBytes);
+        } catch (Exception e) {
+            logger.info("set error, keyBytes={}, valueBytes={}", keyBytes, valueBytes);
+            throw e;
+        }
+    }
+
+    /**
+     * valueBytes 为空或者长度为0, 代表添加一个空的cache
+     * */
+    @Override
+    public void set(byte[] keyBytes, byte[] valueBytes, int expireSeconds) throws Exception {
         try {
             if (null == valueBytes || 0 == valueBytes.length) {
                 valueBytes = BinaryUtils.emptyByteArray;
 
                 // null 值 过期时间需要更短
-                expirationSeconds >>>= 2;
-                if (expirationSeconds <= 0) expirationSeconds = 1;
+                expireSeconds >>>= 2;
+                if (expireSeconds <= 0) expireSeconds = 1;
             }
 
-            setInternal(keyBytes, expirationSeconds, valueBytes);
+            setInternal(keyBytes, expireSeconds, valueBytes);
         } catch (Exception e) {
-            logger.info("set error, keyBytes={}, valueBytes={}", keyBytes, valueBytes);
+            logger.info("set error, keyBytes={}, valueBytes={}, expireSeconds={}", keyBytes, valueBytes, expireSeconds);
             throw e;
         }
     }
@@ -94,11 +111,19 @@ public class BinaryCacheShardedRepository implements BinaryCacheRepositoryInterf
             }
         });
     }
-    private void setInternal(final byte[] keyBytes, final int expire, final byte[] valueBytes) {
+    private void setInternal(final byte[] keyBytes, final byte[] valueBytes) {
         this.execute(new JedisActionNoResult() {
             @Override
             public void action(ShardedJedis jedis) {
-                jedis.setex(keyBytes, expire, valueBytes);
+                jedis.set(keyBytes, valueBytes);
+            }
+        });
+    }
+    private void setInternal(final byte[] keyBytes, final int expireSeconds, final byte[] valueBytes) {
+        this.execute(new JedisActionNoResult() {
+            @Override
+            public void action(ShardedJedis jedis) {
+                jedis.setex(keyBytes, expireSeconds, valueBytes);
             }
         });
     }

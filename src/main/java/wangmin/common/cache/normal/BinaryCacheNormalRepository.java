@@ -29,7 +29,7 @@ public class BinaryCacheNormalRepository implements BinaryCacheRepositoryInterfa
      * 返回值: byte数组长度为0代表cache保存的是空值, 其他代表cache保存的是正确值
      * */
     @Override
-    public byte[] get(byte[] keyBytes, boolean setExpire, int expirationSeconds) throws NoCacheException {
+    public byte[] get(byte[] keyBytes, boolean setExpire, int expireSeconds) throws NoCacheException {
         RedisConnection conn = null;
         try {
             conn = connFactory.getConnection();
@@ -41,10 +41,10 @@ public class BinaryCacheNormalRepository implements BinaryCacheRepositoryInterfa
             if (setExpire) {
                 if (0 == valueBytes.length) {
                     // null 值 过期时间需要更短
-                    expirationSeconds >>>= 2;
-                    if (expirationSeconds <= 0) expirationSeconds = 1;
+                    expireSeconds >>>= 2;
+                    if (expireSeconds <= 0) expireSeconds = 1;
                 }
-                conn.expire(keyBytes, expirationSeconds);
+                conn.expire(keyBytes, expireSeconds);
             }
 
             return valueBytes;
@@ -62,7 +62,30 @@ public class BinaryCacheNormalRepository implements BinaryCacheRepositoryInterfa
      * valueBytes 为空或者长度为0, 代表添加一个空的cache
      * */
     @Override
-    public void set(byte[] keyBytes, byte[] valueBytes, int expirationSeconds) throws Exception {
+    public void set(byte[] keyBytes, byte[] valueBytes) throws Exception {
+        RedisConnection conn = null;
+        try {
+            conn = connFactory.getConnection();
+
+            if (null == valueBytes || 0 == valueBytes.length) {
+                valueBytes = BinaryUtils.emptyByteArray;
+            }
+
+            conn.set(keyBytes, valueBytes);
+        } catch (Exception e) {
+            logger.info("set error, keyBytes={}, valueBytes={}", keyBytes, valueBytes);
+            throw e;
+        } finally {
+            if (conn != null)
+                conn.close();
+        }
+    }
+
+    /**
+     * valueBytes 为空或者长度为0, 代表添加一个空的cache
+     * */
+    @Override
+    public void set(byte[] keyBytes, byte[] valueBytes, int expireSeconds) throws Exception {
         RedisConnection conn = null;
         try {
             conn = connFactory.getConnection();
@@ -71,13 +94,13 @@ public class BinaryCacheNormalRepository implements BinaryCacheRepositoryInterfa
                 valueBytes = BinaryUtils.emptyByteArray;
 
                 // null 值 过期时间需要更短
-                expirationSeconds >>>= 2;
-                if (expirationSeconds <= 0) expirationSeconds = 1;
+                expireSeconds >>>= 2;
+                if (expireSeconds <= 0) expireSeconds = 1;
             }
 
-            conn.set(keyBytes, valueBytes, Expiration.seconds(expirationSeconds), RedisStringCommands.SetOption.UPSERT);
+            conn.setEx(keyBytes, expireSeconds, valueBytes);
         } catch (Exception e) {
-            logger.info("set error, keyBytes={}, valueBytes={}", keyBytes, valueBytes);
+            logger.info("set error, keyBytes={}, valueBytes={}, expireSeconds={}", keyBytes, valueBytes, expireSeconds);
             throw e;
         } finally {
             if (conn != null)

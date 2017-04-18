@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 public @interface RedisAnnotationCache {
     String type();                  // 所属业务, 当做key的前缀, 不能为空
     int keyIndex() default 0;       // 缓存key参数位置, 从0开始
-    int expiration() default 30000; // 缓存超时毫秒数, 默认30秒
+    int expireSeconds() default 30; // 缓存超时秒数, 默认30秒
 }

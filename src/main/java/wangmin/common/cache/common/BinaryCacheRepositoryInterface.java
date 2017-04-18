@@ -10,12 +10,16 @@ public interface BinaryCacheRepositoryInterface {
      * 抛出NoCacheException, 表示没有从cache找到值
      * 返回值: byte数组长度为0代表cache保存的是空值, 其他代表cache保存的是正确值
      * */
-    byte[] get(byte[] keyBytes, boolean setExpire, int expirationSeconds) throws NoCacheException;
+    byte[] get(byte[] keyBytes, boolean setExpire, int expireSeconds) throws NoCacheException;
 
     /**
      * valueBytes 为空或者长度为0, 代表添加一个空的cache
      * */
-    void set(byte[] keyBytes, byte[] valueBytes, int expirationSeconds) throws Throwable;
+    void set(byte[] keyBytes, byte[] valueBytes) throws Throwable;
+    /**
+     * valueBytes 为空或者长度为0, 代表添加一个空的cache
+     * */
+    void set(byte[] keyBytes, byte[] valueBytes, int expireSeconds) throws Throwable;
 
     void del(byte[] keyBytes) throws Throwable;
 }

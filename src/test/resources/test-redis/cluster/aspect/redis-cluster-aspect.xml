@@ -22,7 +22,6 @@
 
     <!-- 注解aop使用的redis缓存处理类 -->
     <bean id="redisAnnotationCacheRepository" class="wangmin.common.cache.common.CacheRepositoryImpl">
-        <property name="defaultExpiration" value="3000" />
         <property name="serializer" ref="kryoRedisSerializer" />
         <property name="binaryCacheRepositoryInterface" ref="binaryCacheRepository" />
     </bean>

@@ -46,18 +46,26 @@ public class RedisAnnotationCacheAspect implements Ordered {
         if (null == key)
             throw new RuntimeException("key should not be null");
 
-        String keyStr = generateKeyStr(redisAnnotationCache.type(), key);
+        int expireSeconds = redisAnnotationCache.expireSeconds();
+
+
+        byte[] keyBytes = BinaryUtils.strToBytes(generateKeyStr(redisAnnotationCache.type(), key));
         try {
-            Object result = cacheRepository.get(BinaryUtils.strToBytes(keyStr), false, redisAnnotationCache.expiration());
+            Object result = cacheRepository.get(keyBytes, false, expireSeconds);
             return result;
         } catch (NoCacheException e) {
             Object result = pjp.proceed();
             try {
-                cacheRepository.set(BinaryUtils.strToBytes(keyStr), result, redisAnnotationCache.expiration());
+                if (expireSeconds >= 0)
+                    cacheRepository.set(keyBytes, result, expireSeconds);
+                else
+                    cacheRepository.set(keyBytes, result);
             } catch (Throwable throwable) {
                 logger.info("", throwable);
             }
             return result;
+        } catch (Throwable e) {
+            return pjp.proceed();
         }
     }
 

@@ -23,7 +23,7 @@ public class RedisAspectDemo {
      * keyIndex : 缓存的key在参数中的位置, 从0开始
      * expiration : 缓存过期时间 (单位秒)
      * **/
-    @RedisAnnotationCache(type= BusinessKeyType.GOODS_NAME, keyIndex=0, expiration=1)
+    @RedisAnnotationCache(type= BusinessKeyType.GOODS_NAME, keyIndex=0, expireSeconds=1)
     public String testValue(String key, int indexForText) {
         String result = String.valueOf(System.currentTimeMillis());
         logger.info("testValue entered, key={}, value={}, indexForText={}", key, result, indexForText);
