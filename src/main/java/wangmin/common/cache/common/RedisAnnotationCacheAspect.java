@@ -49,7 +49,7 @@ public class RedisAnnotationCacheAspect implements Ordered {
         int expireSeconds = redisAnnotationCache.expireSeconds();
 
 
-        byte[] keyBytes = BinaryUtils.strToBytes(generateKeyStr(redisAnnotationCache.type(), key));
+        byte[] keyBytes = MyCacheUtils.generateKeyBytes(redisAnnotationCache.type(), key, redisAnnotationCache.arrayInterStr());
         try {
             Object result = cacheRepository.get(keyBytes, false, expireSeconds);
             return result;
@@ -75,16 +75,6 @@ public class RedisAnnotationCacheAspect implements Ordered {
     }
 
 
-    /**
-     * 生成key的字符串
-     * **/
-    private static String generateKeyStr(String type, Object key) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(type);
-        sb.append(':');
-        sb.append(key);
-        return sb.toString();
-    }
     /**
      * 获取注解信息
      * **/
