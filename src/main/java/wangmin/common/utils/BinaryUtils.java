@@ -79,7 +79,7 @@ public abstract class BinaryUtils {
 		for (Entry<byte[],byte[]> entry : src.entrySet()) {
 			String key = new String(entry.getKey(), charset);
 			String value = null;
-			if (null == entry.getValue())
+			if (null != entry.getValue())
 				value = new String(entry.getValue(), charset);
 			dst.put(key, value);
 		}
